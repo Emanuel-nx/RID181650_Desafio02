@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DNC Interactive — Blog</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── RESET & TOKENS ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #0d0d0d;
+      --chalk:    #f5f3ee;
+      --cream:    #fffdf8;
+      --accent:   #e84c1e;
+      --accent2:  #f5a623;
+      --muted:    #6b6558;
+      --border:   #ddd9d0;
+      --card-bg:  #ffffff;
+
+      --fs-xs:   clamp(.7rem,  1.5vw, .8rem);
+      --fs-sm:   clamp(.85rem, 1.8vw, .95rem);
+      --fs-base: clamp(.95rem, 2vw,   1.05rem);
+      --fs-md:   clamp(1.1rem, 2.5vw, 1.3rem);
+      --fs-lg:   clamp(1.4rem, 3.5vw, 2rem);
+      --fs-xl:   clamp(2rem,   5vw,   3.2rem);
+      --fs-2xl:  clamp(2.4rem, 6vw,   4rem);
+
+      --gap-sm:  clamp(.75rem, 2vw, 1.25rem);
+      --gap-md:  clamp(1.25rem, 3vw, 2rem);
+      --gap-lg:  clamp(2rem,   5vw, 4rem);
+
+      --radius:  .75rem;
+      --shadow:  0 2px 12px rgba(0,0,0,.07);
+      --shadow-hover: 0 8px 32px rgba(0,0,0,.13);
+
+      --max-w: 1200px;
+      --px: clamp(1rem, 5vw, 3rem);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.65;
+      font-size: var(--fs-base);
+      overflow-x: hidden;
+    }
+
+    img { display: block; max-width: 100%; }
+    a   { color: inherit; text-decoration: none; }
+
+    /* ─── UTILITIES ──────────────────────────────────────────────── */
+    .container {
+      max-width: var(--max-w);
+      margin-inline: auto;
+      padding-inline: var(--px);
+    }
+
+    .section-label {
+      display: inline-block;
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .5rem;
+    }
+
+    .section-title {
+      font-size: var(--fs-lg);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -.03em;
+    }
+
+    .section-sub {
+      font-size: var(--fs-sm);
+      color: var(--muted);
+      max-width: 55ch;
+      margin-top: .5rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .35em .85em;
+      border-radius: 999px;
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      background: var(--chalk);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      white-space: nowrap;
+      transition: background .2s, color .2s, border-color .2s;
+    }
+    .tag:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .75em 1.6em;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: var(--fs-sm);
+      font-weight: 700;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all .22s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #c43c12;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(232,76,30,.35);
+    }
+    .btn-outline {
+      background: transparent;
+      border-color: var(--ink);
+      color: var(--ink);
+    }
+    .btn-outline:hover {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    /* ─── NAV ────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,253,248,.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--gap-sm);
+      padding-block: .9rem;
+    }
+
+    .nav-logo {
+      font-size: 1.15rem;
+      font-weight: 900;
+      letter-spacing: -.04em;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: clamp(.75rem, 2.5vw, 2rem);
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: var(--fs-sm);
+      font-weight: 600;
+      color: var(--muted);
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links .active { color: var(--ink); }
+
+    .nav-cta { margin-left: var(--gap-sm); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: .25rem;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--ink);
+      border-radius: 2px;
+      transition: all .3s;
+    }
+
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: .25rem;
+      padding: 1rem var(--px) 1.5rem;
+      border-top: 1px solid var(--border);
+      animation: slideDown .25s ease;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: var(--fs-base);
+      font-weight: 600;
+      color: var(--muted);
+      padding: .5rem 0;
+      border-bottom: 1px solid var(--border);
+      transition: color .2s;
+    }
+    .mobile-menu a:hover { color: var(--ink); }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── HERO / SECTION 1 ───────────────────────────────────────── */
+    .hero {
+      padding-block: clamp(3rem, 8vw, 6rem);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 2.5rem;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    .hero h1 {
+      font-size: var(--fs-2xl);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -.05em;
+      max-width: 18ch;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero p {
+      font-size: var(--fs-md);
+      color: var(--muted);
+      max-width: 50ch;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--gap-sm);
+      margin-top: .5rem;
+    }
+
+    /* ─── SECTION 2 — CARDS GRID ─────────────────────────────────── */
+    .section-cards {
+      padding-block: clamp(3rem, 7vw, 5rem);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header {
+      margin-bottom: var(--gap-lg);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--gap-md);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: box-shadow .25s, transform .25s;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-4px);
+    }
+
+    .card-thumb {
+      aspect-ratio: 16/10;
+      background: var(--chalk);
+      position: relative;
+      overflow: hidden;
+    }
+    .card-thumb-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+    }
+    .card-thumb-placeholder.c1 { background: linear-gradient(135deg,#fde8e0,#fbcfbf); }
+    .card-thumb-placeholder.c2 { background: linear-gradient(135deg,#e0f0fb,#c0ddf7); }
+    .card-thumb-placeholder.c3 { background: linear-gradient(135deg,#e8fbec,#bff0ca); }
+
+    .card-body {
+      padding: 1.25rem 1.35rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-bottom: .6rem;
+    }
+    .card-cat {
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+    .card-dot { color: var(--border); }
+    .card-date {
+      font-size: var(--fs-xs);
+      color: var(--muted);
+    }
+
+    .card h3 {
+      font-size: var(--fs-md);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: .5rem;
+      letter-spacing: -.02em;
+    }
+
+    .card p {
+      font-size: var(--fs-sm);
+      color: var(--muted);
+      flex: 1;
+    }
+
+    .card-footer {
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-author {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: var(--fs-xs);
+      font-weight: 600;
+    }
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .65rem;
+      font-weight: 800;
+    }
+
+    .read-link {
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: .25rem;
+      transition: gap .2s;
+    }
+    .read-link:hover { gap: .5rem; }
+
+    /* ─── SECTION 3 — TECH STACK / FLEX TAGS ────────────────────── */
+    .section-tech {
+      padding-block: clamp(2.5rem, 6vw, 4.5rem);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tech-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      margin-top: var(--gap-md);
+    }
+
+    /* ─── SECTION 4 — TWO COLUMN FEATURES ───────────────────────── */
+    .section-features {
+      padding-block: clamp(3rem, 7vw, 5rem);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .features-stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap-md);
+      margin-top: var(--gap-lg);
+    }
+
+    .feature-row {
+      display: flex;
+      gap: var(--gap-md);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: box-shadow .25s;
+    }
+    .feature-row:hover { box-shadow: var(--shadow-hover); }
+
+    .feature-visual {
+      flex: 0 0 clamp(120px, 30%, 280px);
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+    .feature-visual.fv1 { background: linear-gradient(135deg,#0d0d0d,#2a2a2a); }
+    .feature-visual.fv2 { background: linear-gradient(135deg,#e84c1e,#f5a623); }
+
+    .feature-content {
+      padding: clamp(1.25rem, 3vw, 2rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: .6rem;
+    }
+
+    .feature-content h3 {
+      font-size: var(--fs-md);
+      font-weight: 800;
+      letter-spacing: -.03em;
+    }
+
+    .feature-content p {
+      font-size: var(--fs-sm);
+      color: var(--muted);
+      max-width: 48ch;
+    }
+
+    /* ─── SECTION 5 — TAGS / TOPICS GRID ────────────────────────── */
+    .section-topics {
+      padding-block: clamp(2.5rem, 6vw, 4.5rem);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topics-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .65rem;
+      margin-top: var(--gap-md);
+    }
+
+    .topic-tag {
+      padding: .5em 1.1em;
+      border-radius: var(--radius);
+      font-size: var(--fs-sm);
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: var(--card-bg);
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .topic-tag:hover, .topic-tag.active {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+    .topic-count {
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      background: var(--chalk);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: .1em .5em;
+      transition: background .2s, color .2s;
+    }
+    .topic-tag:hover .topic-count,
+    .topic-tag.active .topic-count {
+      background: rgba(255,255,255,.2);
+      color: #fff;
+    }
+
+    /* ─── SECTION 6 — CTA ────────────────────────────────────────── */
+    .section-cta {
+      padding-block: clamp(3rem, 8vw, 6rem);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .cta-icon {
+      width: 5rem;
+      height: 5rem;
+      margin: 0 auto 1.5rem;
+      background: var(--accent);
+      border-radius: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cta-icon svg {
+      width: 2.25rem;
+      height: 2.25rem;
+      fill: #fff;
+    }
+
+    .section-cta h2 {
+      font-size: var(--fs-xl);
+      font-weight: 900;
+      letter-spacing: -.04em;
+      max-width: 20ch;
+      margin-inline: auto;
+    }
+
+    .section-cta p {
+      font-size: var(--fs-md);
+      color: var(--muted);
+      max-width: 46ch;
+      margin: 1rem auto 2rem;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--ink);
+      color: var(--chalk);
+    }
+
+    .footer-main {
+      padding-block: clamp(2.5rem, 6vw, 4rem);
+    }
+
+    .footer-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--gap-lg);
+      justify-content: space-between;
+    }
+
+    .footer-brand {
+      flex: 1 1 200px;
+    }
+
+    .footer-logo {
+      font-size: 1.2rem;
+      font-weight: 900;
+      letter-spacing: -.04em;
+      margin-bottom: .75rem;
+    }
+    .footer-logo span { color: var(--accent); }
+
+    .footer-tagline {
+      font-size: var(--fs-sm);
+      color: rgba(245,243,238,.55);
+      max-width: 28ch;
+    }
+
+    .footer-col h4 {
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: rgba(245,243,238,.5);
+      margin-bottom: 1rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+
+    .footer-col ul a {
+      font-size: var(--fs-sm);
+      color: rgba(245,243,238,.75);
+      transition: color .2s;
+    }
+    .footer-col ul a:hover { color: var(--chalk); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(245,243,238,.12);
+      padding-block: 1.25rem;
+    }
+
+    .footer-bottom-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--gap-sm);
+      font-size: var(--fs-xs);
+      color: rgba(245,243,238,.45);
+    }
+
+    .footer-socials {
+      display: flex;
+      gap: .75rem;
+    }
+
+    .social-btn {
+      width: 2rem;
+      height: 2rem;
+      border-radius: .4rem;
+      background: rgba(245,243,238,.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 800;
+      color: rgba(245,243,238,.7);
+      transition: background .2s, color .2s;
+      cursor: pointer;
+    }
+    .social-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    @media (max-width: 640px) {
+      .cards-grid { grid-template-columns: 1fr; }
+      .feature-row { flex-direction: column; }
+      .feature-visual { flex: 0 0 160px; min-height: 140px; }
+      .footer-grid { flex-direction: column; gap: 2rem; }
+    }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-inner > * {
+      animation: fadeUp .55s ease both;
+    }
+    .hero-inner > *:nth-child(1) { animation-delay: .05s; }
+    .hero-inner > *:nth-child(2) { animation-delay: .12s; }
+    .hero-inner > *:nth-child(3) { animation-delay: .2s; }
+    .hero-inner > *:nth-child(4) { animation-delay: .28s; }
+    .hero-inner > *:nth-child(5) { animation-delay: .36s; }
+
+    .card { animation: fadeUp .5s ease both; }
+    .card:nth-child(1) { animation-delay: .1s; }
+    .card:nth-child(2) { animation-delay: .18s; }
+    .card:nth-child(3) { animation-delay: .26s; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══════════════════════════════════════════════════════ -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">DNC<span>·</span>Blog</a>
+      <ul class="nav-links">
+        <li><a href="#" class="active">Início</a></li>
+        <li><a href="#">Artigos</a></li>
+        <li><a href="#">Tutoriais</a></li>
+        <li><a href="#">Sobre</a></li>
+      </ul>
+      <a href="#" class="btn btn-primary nav-cta" style="font-size:.82rem;padding:.55em 1.2em;">Assinar newsletter</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#">Início</a>
+    <a href="#">Artigos</a>
+    <a href="#">Tutoriais</a>
+    <a href="#">Sobre</a>
+    <a href="#" style="color:var(--accent)">Assinar newsletter →</a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ══════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">
+        <span class="section-label">DNC Interactive</span>
+      </div>
+      <h1>Design <em>responsivo</em> para todo dispositivo</h1>
+      <p>Aprenda a construir interfaces que se adaptam perfeitamente — de smartphones a monitores ultrawides — sem perder identidade visual.</p>
+      <div class="hero-actions">
+        <a href="#" class="btn btn-primary">Explorar artigos →</a>
+        <a href="#" class="btn btn-outline">Ver tutoriais</a>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem;">
+        <span class="tag">CSS Grid</span>
+        <span class="tag">Flexbox</span>
+        <span class="tag">Media Queries</span>
+        <span class="tag">Mobile First</span>
+        <span class="tag">UX Design</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CARDS GRID ════════════════════════════════════════════════ -->
+<section class="section-cards">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Destaques</span>
+      <h2 class="section-title">Artigos em evidência</h2>
+      <p class="section-sub">Conteúdo selecionado para acelerar sua jornada no desenvolvimento front-end moderno.</p>
+    </div>
+    <div class="cards-grid">
+
+      <article class="card">
+        <div class="card-thumb">
+          <div class="card-thumb-placeholder c1">🖼️</div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-cat">CSS</span>
+            <span class="card-dot">·</span>
+            <span class="card-date">28 fev 2025</span>
+          </div>
+          <h3>Dominando CSS Grid em projetos reais</h3>
+          <p>Do básico ao avançado: como estruturar layouts complexos com grid-template-areas e auto-fit.</p>
+          <div class="card-footer">
+            <div class="card-author">
+              <div class="avatar">AM</div>
+              Ana Mello
+            </div>
+            <a href="#" class="read-link">Ler <span>→</span></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-thumb">
+          <div class="card-thumb-placeholder c2">📐</div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-cat">Flexbox</span>
+            <span class="card-dot">·</span>
+            <span class="card-date">15 fev 2025</span>
+          </div>
+          <h3>Flexbox: guia definitivo para alinhamento</h3>
+          <p>Entenda justify-content, align-items e flex-wrap com exemplos práticos e visuais interativos.</p>
+          <div class="card-footer">
+            <div class="card-author">
+              <div class="avatar" style="background:#3b82f6">LC</div>
+              Lucas Costa
+            </div>
+            <a href="#" class="read-link">Ler <span>→</span></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-thumb">
+          <div class="card-thumb-placeholder c3">📱</div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-cat">Responsividade</span>
+            <span class="card-dot">·</span>
+            <span class="card-date">02 fev 2025</span>
+          </div>
+          <h3>Mobile First: a estratégia que muda tudo</h3>
+          <p>Por que começar pelo menor breakpoint é mais eficiente e como aplicar isso no seu fluxo de trabalho.</p>
+          <div class="card-footer">
+            <div class="card-author">
+              <div class="avatar" style="background:#10b981">JP</div>
+              Julia Pires
+            </div>
+            <a href="#" class="read-link">Ler <span>→</span></a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TECH STACK ════════════════════════════════════════════════ -->
+<section class="section-tech">
+  <div class="container">
+    <span class="section-label">Tecnologias</span>
+    <h2 class="section-title">O que você vai aprender</h2>
+    <p class="section-sub">Ferramentas e conceitos essenciais para se tornar um desenvolvedor front-end completo.</p>
+    <div class="tech-flex">
+      <span class="tag">HTML5 semântico</span>
+      <span class="tag">CSS3 avançado</span>
+      <span class="tag">Flexbox</span>
+      <span class="tag">CSS Grid</span>
+      <span class="tag">Media Queries</span>
+      <span class="tag">Unidades relativas</span>
+      <span class="tag">clamp() &amp; fluid type</span>
+      <span class="tag">Mobile First</span>
+      <span class="tag">Acessibilidade</span>
+      <span class="tag">Performance CSS</span>
+      <span class="tag">Custom Properties</span>
+      <span class="tag">Animações CSS</span>
+      <span class="tag">Figma → Código</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES — TWO COL ════════════════════════════════════════ -->
+<section class="section-features">
+  <div class="container">
+    <span class="section-label">Por que importa</span>
+    <h2 class="section-title">Responsividade na prática</h2>
+    <p class="section-sub">Dois pilares que você precisa dominar para criar experiências impecáveis em qualquer tela.</p>
+    <div class="features-stack">
+
+      <div class="feature-row">
+        <div class="feature-visual fv1">🗂️</div>
+        <div class="feature-content">
+          <span class="section-label">Layout</span>
+          <h3>Estrutura que flui com o conteúdo</h3>
+          <p>Grid e Flexbox combinados permitem que seu layout se reorganize de forma natural, sem regras excessivas de breakpoint. Menos código, mais adaptabilidade.</p>
+          <a href="#" class="read-link" style="margin-top:.5rem">Ver tutorial →</a>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-visual fv2">🔤</div>
+        <div class="feature-content">
+          <span class="section-label">Tipografia</span>
+          <h3>Texto que respira em qualquer tamanho</h3>
+          <p>Com <code style="background:var(--chalk);padding:.1em .35em;border-radius:.3rem;font-size:.9em">clamp()</code> e unidades fluidas, a tipografia escala suavemente entre dispositivos sem saltos abruptos de tamanho.</p>
+          <a href="#" class="read-link" style="margin-top:.5rem">Ver tutorial →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TOPICS / TAGS GRID ════════════════════════════════════════ -->
+<section class="section-topics">
+  <div class="container">
+    <span class="section-label">Explorar</span>
+    <h2 class="section-title">Tópicos do blog</h2>
+    <p class="section-sub">Navegue por assuntos ou filtre o conteúdo que mais combina com seu momento de aprendizado.</p>
+    <div class="topics-grid">
+      <button class="topic-tag active">Todos <span class="topic-count">42</span></button>
+      <button class="topic-tag">CSS <span class="topic-count">18</span></button>
+      <button class="topic-tag">Layout <span class="topic-count">12</span></button>
+      <button class="topic-tag">Mobile <span class="topic-count">9</span></button>
+      <button class="topic-tag">Figma <span class="topic-count">7</span></button>
+      <button class="topic-tag">Acessibilidade <span class="topic-count">6</span></button>
+      <button class="topic-tag">JavaScript <span class="topic-count">15</span></button>
+      <button class="topic-tag">UX Writing <span class="topic-count">4</span></button>
+      <button class="topic-tag">Performance <span class="topic-count">8</span></button>
+      <button class="topic-tag">Animações <span class="topic-count">5</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══════════════════════════════════════════════════════ -->
+<section class="section-cta">
+  <div class="container">
+    <div class="cta-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+      </svg>
+    </div>
+    <h2 class="section-title">Receba conteúdo novo toda semana</h2>
+    <p>Junte-se a mais de 3.400 desenvolvedores que já recebem nossos tutoriais e dicas direto no e-mail, sem spam.</p>
+    <a href="#" class="btn btn-primary" style="font-size:var(--fs-base)">Assinar newsletter grátis →</a>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-main">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">DNC<span>·</span>Blog</div>
+          <p class="footer-tagline">Conteúdo de qualidade para desenvolvedores front-end que querem crescer.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Conteúdo</h4>
+          <ul>
+            <li><a href="#">Artigos</a></li>
+            <li><a href="#">Tutoriais</a></li>
+            <li><a href="#">Desafios</a></li>
+            <li><a href="#">Projetos</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Empresa</h4>
+          <ul>
+            <li><a href="#">Sobre nós</a></li>
+            <li><a href="#">Autores</a></li>
+            <li><a href="#">Contato</a></li>
+            <li><a href="#">Parcerias</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacidade</a></li>
+            <li><a href="#">Termos de uso</a></li>
+            <li><a href="#">Cookies</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-bottom-inner">
+        <span>© 2025 DNC Interactive. Todos os direitos reservados.</span>
+        <div class="footer-socials">
+          <div class="social-btn">in</div>
+          <div class="social-btn">X</div>
+          <div class="social-btn">YT</div>
+          <div class="social-btn">gh</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Hamburger menu toggle
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+  });
+
+  // Topic tag filter toggle
+  document.querySelectorAll('.topic-tag').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.topic-tag').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Intersection Observer — animate cards on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: .12 });
+
+  document.querySelectorAll('.card, .feature-row').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity .5s ease, transform .5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
